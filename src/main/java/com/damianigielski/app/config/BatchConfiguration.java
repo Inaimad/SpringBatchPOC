@@ -1,5 +1,8 @@
-package com.damianigielski.app;
+package com.damianigielski.app.config;
 
+import com.damianigielski.app.tasklets.JobCompletionNotificationListener;
+import com.damianigielski.app.entities.Person;
+import com.damianigielski.app.tasklets.PersonItemProcessor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;

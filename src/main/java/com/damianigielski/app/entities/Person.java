@@ -1,4 +1,4 @@
-package com.damianigielski.app;
+package com.damianigielski.app.entities;
 
 public class Person {
 
