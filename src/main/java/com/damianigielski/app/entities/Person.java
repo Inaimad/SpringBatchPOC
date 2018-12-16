@@ -28,6 +28,13 @@ public class Person {
         this.firstName = firstName;
     }
 
+    public Person(int id, String lastName, String firstName, String migrationStatus) {
+        this.id = id;
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.migrationStatus = migrationStatus;
+    }
+
     public int getId() {
         return id;
     }

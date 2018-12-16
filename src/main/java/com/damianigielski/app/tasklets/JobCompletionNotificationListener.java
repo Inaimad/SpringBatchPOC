@@ -37,5 +37,16 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
                             rs.getString(3))
             ).forEach(person -> log.info("Found <" + person + "> in the database."));
         }
+        log.info("========================================");
+        log.info("Verifying PEOPLE...");
+        log.info("========================================");
+
+        jdbcTemplate.query("SELECT person_id, first_name, last_name, migration_status FROM people",
+                (rs, row) -> new Person(
+                        rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4))
+        ).forEach(person -> log.info("Found <" + person + "> in the database."));
     }
 }
