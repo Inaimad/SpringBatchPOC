@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
 
     Page<Person> findByMigrationStatusIsNull(Pageable pageable);
 
+    @Transactional
     @Query(nativeQuery = true,
             value = "UPDATE people SET people.migration_status = '093' WHERE people.person_id IN :#{#personIdList}")
     @Modifying

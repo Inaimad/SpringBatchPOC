@@ -1,11 +1,8 @@
 package com.damianigielski.app.config;
 
 import com.damianigielski.app.entities.ConvertedPerson;
-import com.damianigielski.app.tasklets.ConvertedPersonItemWriter;
-import com.damianigielski.app.tasklets.JobCompletionNotificationListener;
+import com.damianigielski.app.tasklets.*;
 import com.damianigielski.app.entities.Person;
-import com.damianigielski.app.tasklets.PersonItemProcessor;
-import com.damianigielski.app.tasklets.PersonItemReader;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -42,7 +39,10 @@ public class BatchConfiguration {
     private ConvertedPersonItemWriter convertedPersonItemWriter;
 
     @Autowired
-    public PersonItemProcessor processor;
+    private PersonItemProcessor processor;
+
+    @Autowired
+    private CustomContextListener customContextListener;
 
 
     @Bean
@@ -62,6 +62,7 @@ public class BatchConfiguration {
                 .reader(personItemReader)
                 .processor(processor)
                 .writer(convertedPersonItemWriter)
+                .listener(customContextListener)
                 .build();
     }
 }
