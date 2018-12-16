@@ -1,35 +1,30 @@
 package com.damianigielski.app.config;
 
+import com.damianigielski.app.entities.ConvertedPerson;
+import com.damianigielski.app.tasklets.ConvertedPersonItemWriter;
 import com.damianigielski.app.tasklets.JobCompletionNotificationListener;
 import com.damianigielski.app.entities.Person;
 import com.damianigielski.app.tasklets.PersonItemProcessor;
+import com.damianigielski.app.tasklets.PersonItemReader;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.database.JdbcCursorItemReader;
-import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import javax.sql.DataSource;
 
 @Configuration
 @EnableBatchProcessing
+@EnableJpaRepositories(basePackages = "com.damianigielski.app.repositories")
+@ComponentScan
 public class BatchConfiguration {
-
-    private static final String QUERY_FIND_PEOPLE =
-            "SELECT " +
-                    "first_name, " +
-                    "last_name " +
-                    "FROM people";
 
     @Autowired
     public JobBuilderFactory jobBuilderFactory;
@@ -40,33 +35,15 @@ public class BatchConfiguration {
     @Autowired
     public DataSource dataSource;
 
+    @Autowired
+    private PersonItemReader personItemReader;
 
+    @Autowired
+    private ConvertedPersonItemWriter convertedPersonItemWriter;
 
-    @Bean
-    ItemReader<Person> reader(DataSource dataSource) {
-        JdbcCursorItemReader<Person> databaseReader = new JdbcCursorItemReader<>();
+    @Autowired
+    public PersonItemProcessor processor;
 
-        databaseReader.setDataSource(dataSource);
-        databaseReader.setSql(QUERY_FIND_PEOPLE);
-        databaseReader.setRowMapper(new BeanPropertyRowMapper<>(Person.class));
-
-        return databaseReader;
-    }
-
-
-    @Bean
-    public PersonItemProcessor processor() {
-        return new PersonItemProcessor();
-    }
-
-    @Bean
-    public JdbcBatchItemWriter<Person> writer(DataSource dataSource) {
-        return new JdbcBatchItemWriterBuilder<Person>()
-                .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
-                .sql("INSERT INTO converted_people (first_name, last_name) VALUES (:firstName, :lastName)")
-                .dataSource(dataSource)
-                .build();
-    }
 
     @Bean
     public Job importUserJob(JobCompletionNotificationListener listener, Step step1) {
@@ -79,12 +56,12 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public Step step1(JdbcBatchItemWriter<Person> writer) {
+    public Step step1() {
         return stepBuilderFactory.get("step1")
-                .<Person, Person> chunk(10)
-                .reader(reader(dataSource))
-                .processor(processor())
-                .writer(writer)
+                .<Person, ConvertedPerson> chunk(10)
+                .reader(personItemReader)
+                .processor(processor)
+                .writer(convertedPersonItemWriter)
                 .build();
     }
 }

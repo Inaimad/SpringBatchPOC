@@ -1,10 +1,9 @@
 package com.damianigielski.app.repositories;
 
-import com.damianigielski.app.entities.Person;
+import com.damianigielski.app.entities.ConvertedPerson;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
-public interface PersonRepository extends JpaRepository<Person, Integer> {
+public interface ConvertedPersonRepository extends JpaRepository<ConvertedPerson, Integer> {
 }

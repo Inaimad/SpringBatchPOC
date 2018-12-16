@@ -1,22 +1,25 @@
 package com.damianigielski.app.tasklets;
 
+import com.damianigielski.app.entities.ConvertedPerson;
 import com.damianigielski.app.entities.Person;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.stereotype.Component;
 
-public class PersonItemProcessor implements ItemProcessor<Person, Person> {
+@StepScope
+@Component
+public class PersonItemProcessor implements ItemProcessor<Person, ConvertedPerson> {
 
 
     private static final Logger log = LoggerFactory.getLogger(ItemProcessor.class);
 
 
     @Override
-    public Person process(final Person person) throws Exception {
-        final String firstName = person.getFirstName().toUpperCase();
-        final String lastName = person.getLastName().toUpperCase();
-
-        final Person transformedPerson = new Person(firstName, lastName);
+    public ConvertedPerson process(final Person person) throws Exception {
+        final ConvertedPerson transformedPerson =
+                new ConvertedPerson(person.getId(), person.getFirstName().toUpperCase(), person.getLastName().toUpperCase());
 
         log.info("Converting {} into {}", person, transformedPerson);
 

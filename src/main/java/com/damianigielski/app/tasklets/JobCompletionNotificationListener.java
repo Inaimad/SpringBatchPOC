@@ -1,5 +1,6 @@
 package com.damianigielski.app.tasklets;
 
+import com.damianigielski.app.entities.ConvertedPerson;
 import com.damianigielski.app.entities.Person;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,12 +26,15 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
     @Override
     public void afterJob(JobExecution jobExecution) {
         if(jobExecution.getStatus() == BatchStatus.COMPLETED) {
-            log.info("!!! JOB FINISHED! Time to verify the results");
+            log.info("========================================");
+            log.info("!!! JOB FINISHED !!! Verifying results...");
+            log.info("========================================");
 
-            jdbcTemplate.query("SELECT first_name, last_name FROM converted_people",
-                    (rs, row) -> new Person(
-                            rs.getString(1),
-                            rs.getString(2))
+            jdbcTemplate.query("SELECT person_id, first_name, last_name FROM converted_people",
+                    (rs, row) -> new ConvertedPerson(
+                            rs.getInt(1),
+                            rs.getString(2),
+                            rs.getString(3))
             ).forEach(person -> log.info("Found <" + person + "> in the database."));
         }
     }
