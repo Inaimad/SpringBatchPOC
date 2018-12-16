@@ -16,6 +16,9 @@ public class Person {
     @Column(name = "first_name")
     private String firstName;
 
+    @Column(name = "migration_status")
+    private String migrationStatus;
+
 
     public Person() {
     }
@@ -49,11 +52,21 @@ public class Person {
         this.firstName = firstName;
     }
 
+    public String getMigrationStatus() {
+        return migrationStatus;
+    }
+
+    public void setMigrationStatus(String migrationStatus) {
+        this.migrationStatus = migrationStatus;
+    }
+
     @Override
     public String toString() {
         return "Person{" +
-                "lastName='" + lastName + '\'' +
+                "id=" + id +
+                ", lastName='" + lastName + '\'' +
                 ", firstName='" + firstName + '\'' +
+                ", migrationStatus='" + migrationStatus + '\'' +
                 '}';
     }
 }

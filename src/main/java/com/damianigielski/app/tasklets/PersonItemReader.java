@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;
+
 @StepScope
 @Component
 public class PersonItemReader extends RepositoryItemReader<Person> {
@@ -25,7 +26,7 @@ public class PersonItemReader extends RepositoryItemReader<Person> {
     private void initialize() {
         this.setRepository(personRepository);
         this.setPageSize(10);
-        this.setMethodName("findAll");
+        this.setMethodName("findByMigrationStatusIsNull");
         this.setSort(Collections.singletonMap("id", Sort.Direction.ASC));
     }
 
